@@ -1,0 +1,10 @@
+function registerClick(rule) {
+    $.ajax(
+        '/api/register-click',
+        {
+            data: JSON.stringify({'rule': rule }),
+            type: 'post',
+            contentType: 'application/json'
+        }
+    )
+}

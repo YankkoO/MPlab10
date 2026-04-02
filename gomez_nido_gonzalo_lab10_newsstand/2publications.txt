@@ -1,0 +1,2 @@
+newspaper	El Mundo	4	10
+magazine	Hola	14	30	WEEKLY

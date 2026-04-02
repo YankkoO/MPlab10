@@ -1,0 +1,54 @@
+async function callApi(files, origin) {
+    const toastElList = document.querySelectorAll('.toast');
+
+    toastElList.forEach(toastEl => {
+        const toast = bootstrap.Toast.getInstance(toastEl)
+            || new bootstrap.Toast(toastEl);
+        toast.hide();
+    });
+
+    $('#spinner').show();
+    closeForm();
+    document.getElementById('results').innerHTML = '';
+    files = await files.reduce((acc, val) => acc.concat(val), []);
+    const uploadType = await getUploadType(files);
+    const name = getResourceName(files);
+    const zip = new JSZip();
+    if (origin === 'drag&drop') {
+        files.forEach(file => zip.file(file.path, file));
+    }
+    else if (origin === 'fileUpload') {
+        files.forEach(file => zip.file(file.name, file));
+    }
+
+    let selectedAnalysis = getSelectedAnalysis();
+
+    zip.generateAsync({type: "blob"})
+        .then(function (content) {
+            const formData = new FormData();
+            formData.append('resourceName', name);
+            formData.append('file', content, name);
+            formData.append('uploadType',uploadType);
+            formData.append('analyses', new Blob([JSON.stringify(selectedAnalysis)], {
+                type: 'application/json'
+            }));
+
+            fetch('http://156.35.95.39:8080/students/execute', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    processResult(data);
+                    $('.satisfaction-form').show();
+                    $('#spinner').hide();
+                })
+                .catch(error => {
+                    $('#spinner').hide();
+                    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(document.getElementById('general-error'));
+                    toastBootstrap.show();
+                });
+        });
+}

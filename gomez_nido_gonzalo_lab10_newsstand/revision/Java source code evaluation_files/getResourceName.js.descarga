@@ -1,0 +1,7 @@
+function getResourceName(files) {
+    let fileNames = [];
+    for (let i = 0; i < files.length; i++) {
+        fileNames[i] =  files[i].name;
+    }
+    return fileNames.sort().join(";")
+}

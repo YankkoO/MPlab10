@@ -1,0 +1,17 @@
+const getUploadType = async (files) => {
+    if (files.length === 1) {
+        let entry = files[0];
+        if (entry.isDirectory) {
+            return "folder";
+        }
+        else if (entry.name.endsWith(".zip")) {
+            return "zip";
+        }
+        else {
+            return "singleFile";
+        }
+    }
+    else {
+        return "multipleFiles";
+    }
+}

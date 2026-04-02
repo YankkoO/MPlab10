@@ -1,0 +1,12 @@
+const selectAll = document.getElementById('selectAll');
+const checkboxes = document.querySelectorAll('.objectCheckbox');
+
+selectAll.addEventListener('change', () => {
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+});
+
+checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        selectAll.checked = [...checkboxes].every(c => c.checked);
+    });
+});

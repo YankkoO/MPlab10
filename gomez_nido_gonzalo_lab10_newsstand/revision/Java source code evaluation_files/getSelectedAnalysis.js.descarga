@@ -1,0 +1,13 @@
+function getSelectedAnalysis() {
+    let selectedAnalysis = [];
+    let checkboxes = document.getElementsByClassName('objectCheckbox');
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            let id = checkboxes[i].id;
+            selectedAnalysis.push({key: id});
+        }
+    }
+
+    return selectedAnalysis;
+}
