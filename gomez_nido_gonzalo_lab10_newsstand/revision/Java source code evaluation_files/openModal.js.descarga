@@ -1,0 +1,1 @@
+new bootstrap.Modal('#user-modal').show();

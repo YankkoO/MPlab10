@@ -1,0 +1,47 @@
+function processResult(data) {
+    for (let file in data) {
+        let fullResult = data[file];
+        for (let username in fullResult) {
+            let result = fullResult[username];
+            for (let rule in result) {
+                let ruleData = result[rule];
+                if (rule === 'compilationError') {
+                    return processCompilationError(ruleData);
+                }
+                let div = '<div class="d-flex flex-column align-items-center justify-content-center">';
+                div += '<div class="w-100 d-flex justify-content-between align-items-start p-3 h4 pb-2 mb-4 border-bottom border-3 border-dark">';
+                div += '<a class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-25-hover" data-bs-toggle="collapse" href="#' + rule + '-result" role="button" aria-expanded="false" aria-controls="' + rule + '-result">' + ruleData['title'] + "</a>";
+                div += '<span class="badge text-bg-warning rounded-pill">' + ruleData['lines'].length + '</span>';
+                div += '</div>';
+                div += '<div class="w-100 collapse" id="' + rule + '-result"><div class="rule-results d-flex align-items-start flex-column ">';
+                div += '<div class="w-100 border border-2 border-dark-subtle p-2 rounded card-body">' + ruleData['description'] + '</div>'
+                let lines = ruleData['lines'];
+                for (let i = 0; i < lines.length; i++) {
+                    div += '<div class="mt-2 d-flex">';
+                    div += '<div class="bg-warning bg-opacity-25 border border-warning border-2 p-2 rounded me-1">' + (i + 1) + '</div>';
+                    div += '<a class="btn btn-warning" data-bs-toggle="collapse" href="#' + rule + '-' + i + '" role="button" aria-expanded="false" aria-controls="' + rule + i + '">' + lines[i]['location'] + '</a>';
+                    div += '</div>';
+                    div += '<div class="collapse w-100 mt-2 p-2 ms-2 mb-4" id="' + rule + '-' + i + '">';
+                    div += '<div class="d-flex flex-column">'
+                    if (lines[i].code) {
+                        div += '<div class="file-tab p-2">' + lines[i]['location'].split(' ')[0].split('\\').pop() + '</div>'
+                        div += lines[i].code;
+                    }
+                    div += '<div class="mt-2">' + lines[i].message + '</div></div></div>';
+                }
+                div += '</div></div></div>';
+                $('#results').append(div);
+            }
+        }
+        Prism.highlightAll();
+
+        document.querySelectorAll('.collapse').forEach(element => {
+            element.addEventListener('shown.bs.collapse', () => {
+                window.dispatchEvent(new Event('resize'));
+            });
+        });
+
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(document.getElementById('success'));
+        toastBootstrap.show();
+    }
+}
